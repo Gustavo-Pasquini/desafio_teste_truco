@@ -11,8 +11,8 @@ const BARALHO_MAO_ESPECIAL = montarBaralho(
   '4O',
 );
 
-async function abrirMaoEspecial(placar) {
-  const user = await abrirJogo({ placar, baralho: BARALHO_MAO_ESPECIAL });
+async function abrirMaoEspecial(placar, baralho = BARALHO_MAO_ESPECIAL) {
+  const user = await abrirJogo({ placar, baralho });
   await user.click(screen.getByTestId('btn-nova-partida'));
   return user;
 }
@@ -21,14 +21,19 @@ test('TC-TR-25 Nós escolhe jogar a mão de onze por 3 pontos', async () => {
   const user = await abrirMaoEspecial('11-4');
 
   expect(screen.getByTestId('decisao-onze')).toBeVisible();
+  expect(screen.getByTestId('decisao-onze')).toHaveAttribute('data-dupla', 'nos');
   expect(screen.getByTestId('btn-jogar-onze')).toHaveTextContent(/^Jogar$/i);
   expect(screen.getByTestId('btn-correr-onze')).toHaveTextContent(/^Correr$/i);
   const cartasDoParceiro = cartasNaMao('J3');
   expect(cartasDoParceiro).toHaveLength(3);
   for (const carta of cartasDoParceiro) expect(carta).toHaveAttribute('data-face', 'cima');
+  for (const adversario of ['J2', 'J4']) {
+    for (const carta of cartasNaMao(adversario)) expect(carta).toHaveAttribute('data-face', 'baixo');
+  }
 
   await user.click(screen.getByTestId('btn-jogar-onze'));
   expect(screen.getByTestId('valor-mao')).toHaveTextContent(/^3$/);
+  expect(screen.getByTestId('decisao-onze')).not.toBeVisible();
 });
 
 test('TC-TR-26 Nós corre da mão de onze e Eles ganha 1 ponto', async () => {
