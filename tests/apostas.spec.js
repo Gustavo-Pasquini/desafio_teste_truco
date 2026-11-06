@@ -1,7 +1,7 @@
 // Testes de pedidos e aumentos (Breno — B2, B3). Casos da seção 5 do PLANEJAMENTO.md.
 // Modo somente testes: o jogo ainda não existe, então estes testes FALHAM de propósito.
 import { test, expect } from 'vitest';
-import { abrirJogo, screen, montarBaralho, jogarVaza } from './helpers.js';
+import { abrirJogo, screen, montarBaralho, jogarVaza, cartasNaMao } from './helpers.js';
 
 // Vira 4O (manilha 5, ausente das mãos). J3 vence as duas primeiras vazas com 3C e 3P.
 const BARALHO_NOS_VENCE = montarBaralho(
@@ -47,4 +47,16 @@ test('TC-TR-18 aceitar Truco faz a mão valer 3 pontos', async () => {
   await jogarVaza(user, { J1: '6E', J2: '7C', J3: '3C', J4: 'QE' });
   await jogarVaza(user, { J3: '3P', J4: 'JE', J1: '2E', J2: '6C' });
   expect(screen.getByTestId('placar-nos')).toHaveTextContent(/^3$/);
+});
+
+test('TC-TR-19 correr do Truco dá 1 ponto a Nós e distribui nova mão', async () => {
+  const user = await abrirJogo();
+  await user.click(screen.getByTestId('btn-nova-partida'));
+  await user.click(screen.getByTestId('btn-truco'));
+  await user.click(screen.getByTestId('btn-correr'));
+
+  expect(screen.getByTestId('placar-nos')).toHaveTextContent(/^1$/);
+  for (const jogador of ['J1', 'J2', 'J3', 'J4']) {
+    expect(cartasNaMao(jogador)).toHaveLength(3);
+  }
 });
