@@ -1,7 +1,7 @@
 // Testes de mão de onze e mão de ferro (Breno — B5). Casos da seção 5 do PLANEJAMENTO.md.
 // Modo somente testes: o jogo ainda não existe, então estes testes FALHAM de propósito.
 import { test, expect } from 'vitest';
-import { abrirJogo, screen, montarBaralho, cartasNaMao } from './helpers.js';
+import { abrirJogo, screen, montarBaralho, jogar, cartasNaMao } from './helpers.js';
 
 const BARALHO_MAO_ESPECIAL = montarBaralho(
   ['6E', '2E', '7E'],
@@ -38,5 +38,24 @@ test('TC-TR-26 Nós corre da mão de onze e Eles ganha 1 ponto', async () => {
   expect(screen.getByTestId('placar-eles')).toHaveTextContent(/^5$/);
   for (const jogador of ['J1', 'J2', 'J3', 'J4']) {
     expect(cartasNaMao(jogador)).toHaveLength(3);
+  }
+});
+
+test('TC-TR-27 não permite Truco durante toda a mão de onze', async () => {
+  const user = await abrirMaoEspecial('11-4');
+  await user.click(screen.getByTestId('btn-jogar-onze'));
+
+  const esperarTrucoIndisponivel = () => {
+    const botao = screen.queryByTestId('btn-truco');
+    expect(botao === null || botao.hidden || botao.disabled).toBe(true);
+  };
+  esperarTrucoIndisponivel();
+
+  for (const [jogador, carta] of [
+    ['J1', '6E'], ['J2', '7C'], ['J3', '3C'], ['J4', 'QE'],
+    ['J3', '3P'], ['J4', 'JE'], ['J1', '2E'], ['J2', '6C'],
+  ]) {
+    await jogar(user, jogador, carta);
+    esperarTrucoIndisponivel();
   }
 });
