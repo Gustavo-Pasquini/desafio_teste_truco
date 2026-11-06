@@ -50,7 +50,7 @@ test('TC-TR-23 Nós vence a partida ao chegar a 12 pontos', async () => {
   expect(screen.getByTestId('mensagem')).toHaveTextContent(/^Nós venceram a partida!$/);
   const cartas = screen.getAllByTestId(/^carta-j[1-4]-\d$/);
   expect(cartas.length).toBeGreaterThan(0);
-  for (const carta of cartas) expect(carta).toBeDisabled();
+  for (const carta of cartas) expect(carta).toHaveAttribute('disabled');
 });
 
 test('TC-TR-24 Nova partida após o fim zera o placar e redistribui', async () => {
