@@ -21,6 +21,18 @@ const BARALHO_ELES_VENCE = montarBaralho(
   '4O',
 );
 
+// Duas mãos fixas: Nós vence as duas primeiras vazas da mão 1; Eles, as da mão 2.
+const BARALHO_PLACAR_ACUMULADO = [
+  BARALHO_NOS_VENCE,
+  montarBaralho(
+    ['7E', 'KE', 'AO'],
+    ['3E', '2C', 'QC'],
+    ['6P', '7P', '3O'],
+    ['QE', 'JE', '6C'],
+    '4O',
+  ),
+].join(',');
+
 async function vencerTrucoComNos(placar) {
   const user = await abrirJogo({ placar, baralho: BARALHO_NOS_VENCE });
   await user.click(screen.getByTestId('btn-nova-partida'));
@@ -79,4 +91,18 @@ test.each([
   expect(screen.getByTestId('placar-nos')).toHaveTextContent(new RegExp(`^${placarNos}$`));
   expect(screen.getByTestId('placar-eles')).toHaveTextContent(new RegExp(`^${placarEles}$`));
   expect(screen.getByTestId('mensagem')).toHaveTextContent(new RegExp(`^${mensagem}$`));
+});
+
+test('TC-TR-39 placar acumula as vitórias entre as mãos', async () => {
+  const user = await abrirJogo({ baralho: BARALHO_PLACAR_ACUMULADO });
+  await user.click(screen.getByTestId('btn-nova-partida'));
+
+  await jogarVaza(user, { J1: '6E', J2: '7C', J3: '3C', J4: 'QE' });
+  await jogarVaza(user, { J3: '3P', J4: 'JE', J1: '2E', J2: '6C' });
+  expect(screen.getByTestId('placar-nos')).toHaveTextContent(/^1$/);
+
+  await jogarVaza(user, { J2: '3E', J3: '6P', J4: 'QE', J1: '7E' });
+  await jogarVaza(user, { J2: '2C', J3: '7P', J4: 'JE', J1: 'KE' });
+  expect(screen.getByTestId('placar-nos')).toHaveTextContent(/^1$/);
+  expect(screen.getByTestId('placar-eles')).toHaveTextContent(/^1$/);
 });
