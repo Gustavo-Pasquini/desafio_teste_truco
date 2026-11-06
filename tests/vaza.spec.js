@@ -165,3 +165,20 @@ test('TC-TR-34 1-1: a 3ª vaza decide', async () => {
   expect(screen.getByTestId('placar-eles')).toHaveTextContent(/^1$/);
   expect(screen.getByTestId('placar-nos')).toHaveTextContent(/^0$/);
 });
+
+// Mão 1 igual à do TC-TR-37 (Nós vence). A mão 2 começa com J2 (rodízio) e a 1ª vaza empata
+// com as maiores cartas jogadas por J3 e J4: começa a próxima quem começou a vaza empatada, J2.
+const BARALHO_EMPATE_NA_MAO_2 = [
+  montarBaralho(['6E', '2E', '7E'], ['7C', '6C', 'QC'], ['3C', '3P', 'AP'], ['QE', 'JE', 'KE'], '4O'),
+  montarBaralho(['7E', 'KE', 'AO'], ['6C', '2C', 'QC'], ['3O', '6P', '7P'], ['3E', 'QE', 'JE'], '4O'),
+].join(',');
+
+test('TC-TR-38 depois de um empate, começa quem começou a vaza empatada', async () => {
+  const user = await comBaralho(BARALHO_EMPATE_NA_MAO_2);
+  await jogarVaza(user, { J1: '6E', J2: '7C', J3: '3C', J4: 'QE' });
+  await jogarVaza(user, { J3: '3P', J4: 'JE', J1: '2E', J2: '6C' }); // fim da mão 1
+  expect(screen.getByTestId('vez')).toHaveTextContent(/^J2$/);
+  await jogarVaza(user, { J2: '6C', J3: '3O', J4: '3E', J1: '7E' }); // 3O × 3E
+  expect(screen.getByTestId('vaza-1')).toHaveTextContent('Empate');
+  expect(screen.getByTestId('vez')).toHaveTextContent(/^J2$/);
+});
