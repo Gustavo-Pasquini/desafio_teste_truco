@@ -11,8 +11,8 @@ const BARALHO_MAO_ESPECIAL = montarBaralho(
   '4O',
 );
 
-async function abrirMaoEspecial(placar) {
-  const user = await abrirJogo({ placar, baralho: BARALHO_MAO_ESPECIAL });
+async function abrirMaoEspecial(placar, baralho = BARALHO_MAO_ESPECIAL) {
+  const user = await abrirJogo({ placar, baralho });
   await user.click(screen.getByTestId('btn-nova-partida'));
   return user;
 }
@@ -21,24 +21,36 @@ test('TC-TR-25 Nós escolhe jogar a mão de onze por 3 pontos', async () => {
   const user = await abrirMaoEspecial('11-4');
 
   expect(screen.getByTestId('decisao-onze')).toBeVisible();
+  expect(screen.getByTestId('decisao-onze')).toHaveAttribute('data-dupla', 'nos');
   expect(screen.getByTestId('btn-jogar-onze')).toHaveTextContent(/^Jogar$/i);
   expect(screen.getByTestId('btn-correr-onze')).toHaveTextContent(/^Correr$/i);
   const cartasDoParceiro = cartasNaMao('J3');
   expect(cartasDoParceiro).toHaveLength(3);
   for (const carta of cartasDoParceiro) expect(carta).toHaveAttribute('data-face', 'cima');
+  for (const adversario of ['J2', 'J4']) {
+    for (const carta of cartasNaMao(adversario)) expect(carta).toHaveAttribute('data-face', 'baixo');
+  }
 
   await user.click(screen.getByTestId('btn-jogar-onze'));
   expect(screen.getByTestId('valor-mao')).toHaveTextContent(/^3$/);
+  expect(screen.getByTestId('decisao-onze')).not.toBeVisible();
 });
 
+// Duas mãos fixas: as cartas da 2ª mão (J1 = 7E, KE, AO) só aparecem se a mão for redistribuída.
+const BARALHO_DUAS_MAOS = [
+  BARALHO_MAO_ESPECIAL,
+  montarBaralho(['7E', 'KE', 'AO'], ['3E', '2C', 'QC'], ['6P', '7P', '3O'], ['QE', 'JE', '6C'], '4O'),
+].join(',');
+
 test('TC-TR-26 Nós corre da mão de onze e Eles ganha 1 ponto', async () => {
-  const user = await abrirMaoEspecial('11-4');
+  const user = await abrirMaoEspecial('11-4', BARALHO_DUAS_MAOS);
   await user.click(screen.getByTestId('btn-correr-onze'));
 
   expect(screen.getByTestId('placar-eles')).toHaveTextContent(/^5$/);
   for (const jogador of ['J1', 'J2', 'J3', 'J4']) {
     expect(cartasNaMao(jogador)).toHaveLength(3);
   }
+  expect(cartasNaMao('J1').map((c) => c.getAttribute('data-carta')).sort()).toEqual(['7E', 'AO', 'KE']); // é a 2ª mão
 });
 
 test('TC-TR-27 não permite Truco durante toda a mão de onze', async () => {
@@ -80,10 +92,13 @@ test('TC-TR-36 Eles decide sua mão de onze e pode correr', async () => {
   const user = await abrirMaoEspecial('4-11');
 
   expect(screen.getByTestId('decisao-onze')).toBeVisible();
-  expect(screen.getByTestId('decisao-onze')).toHaveTextContent(/Eles/i);
+  expect(screen.getByTestId('decisao-onze')).toHaveAttribute('data-dupla', 'eles');
   const cartasDoParceiro = cartasNaMao('J4');
   expect(cartasDoParceiro).toHaveLength(3);
   for (const carta of cartasDoParceiro) expect(carta).toHaveAttribute('data-face', 'cima');
+  for (const adversario of ['J1', 'J3']) {
+    for (const carta of cartasNaMao(adversario)) expect(carta).toHaveAttribute('data-face', 'baixo');
+  }
 
   await user.click(screen.getByTestId('btn-correr-onze'));
   expect(screen.getByTestId('placar-nos')).toHaveTextContent(/^5$/);

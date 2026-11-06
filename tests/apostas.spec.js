@@ -19,22 +19,25 @@ test('TC-TR-16 botão Truco disponível no início da mão', async () => {
   expect(screen.getByTestId('valor-mao')).toHaveTextContent(/^1$/);
   expect(screen.getByTestId('btn-truco')).toHaveTextContent(/^Truco$/i);
   expect(screen.getByTestId('btn-truco')).toBeEnabled();
+  expect(screen.getByTestId('resposta')).not.toBeVisible(); // nenhum pedido ainda
+  expect(screen.getByTestId('decisao-onze')).not.toBeVisible(); // não é mão de onze
 });
 
 test('TC-TR-17 pedir Truco exibe respostas para Eles e bloqueia as cartas', async () => {
   const user = await abrirJogo();
   await user.click(screen.getByTestId('btn-nova-partida'));
+  expect(screen.getByTestId('resposta')).not.toBeVisible(); // só aparece depois do pedido
   await user.click(screen.getByTestId('btn-truco'));
 
   expect(screen.getByTestId('resposta')).toBeVisible();
-  expect(screen.getByTestId('resposta')).toHaveTextContent(/Eles/i);
+  expect(screen.getByTestId('resposta')).toHaveAttribute('data-dupla', 'eles');
   expect(screen.getByTestId('btn-aceitar')).toHaveTextContent(/^Aceitar$/i);
   expect(screen.getByTestId('btn-correr')).toHaveTextContent(/^Correr$/i);
   expect(screen.getByTestId('btn-aumentar')).toHaveTextContent(/^Seis$/i);
 
   const cartas = screen.getAllByTestId(/^carta-j[1-4]-\d$/);
   expect(cartas).toHaveLength(12);
-  for (const carta of cartas) expect(carta).toBeDisabled();
+  for (const carta of cartas) expect(carta).toHaveAttribute('disabled');
 });
 
 test('TC-TR-18 aceitar Truco faz a mão valer 3 pontos', async () => {
@@ -49,8 +52,14 @@ test('TC-TR-18 aceitar Truco faz a mão valer 3 pontos', async () => {
   expect(screen.getByTestId('placar-nos')).toHaveTextContent(/^3$/);
 });
 
+// Duas mãos fixas: as cartas da 2ª mão (J1 = 7E, KE, AO) só aparecem se a mão for redistribuída.
+const BARALHO_DUAS_MAOS = [
+  BARALHO_NOS_VENCE,
+  montarBaralho(['7E', 'KE', 'AO'], ['3E', '2C', 'QC'], ['6P', '7P', '3O'], ['QE', 'JE', '6C'], '4O'),
+].join(',');
+
 test('TC-TR-19 correr do Truco dá 1 ponto a Nós e distribui nova mão', async () => {
-  const user = await abrirJogo();
+  const user = await abrirJogo({ baralho: BARALHO_DUAS_MAOS });
   await user.click(screen.getByTestId('btn-nova-partida'));
   await user.click(screen.getByTestId('btn-truco'));
   await user.click(screen.getByTestId('btn-correr'));
@@ -59,6 +68,7 @@ test('TC-TR-19 correr do Truco dá 1 ponto a Nós e distribui nova mão', async 
   for (const jogador of ['J1', 'J2', 'J3', 'J4']) {
     expect(cartasNaMao(jogador)).toHaveLength(3);
   }
+  expect(cartasNaMao('J1').map((c) => c.getAttribute('data-carta')).sort()).toEqual(['7E', 'AO', 'KE']); // é a 2ª mão
 });
 
 test('TC-TR-20 aumentos levam a mão de Truco até Doze', async () => {
@@ -78,7 +88,8 @@ test('TC-TR-20 aumentos levam a mão de Truco até Doze', async () => {
 
   await user.click(screen.getByTestId('btn-aumentar'));
   expect(screen.getByTestId('valor-mao')).toHaveTextContent(/^12$/);
-  expect(screen.queryByTestId('btn-aumentar')).not.toBeInTheDocument();
+  const aumentar = screen.queryByTestId('btn-aumentar'); // no Doze não há aumento: some, fica escondido ou bloqueado
+  expect(aumentar === null || aumentar.hidden || aumentar.closest('[hidden]') !== null || aumentar.disabled).toBe(true);
 
   await user.click(screen.getByTestId('btn-aceitar'));
   expect(screen.getByTestId('valor-mao')).toHaveTextContent(/^12$/);

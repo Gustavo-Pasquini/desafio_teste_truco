@@ -206,6 +206,13 @@ Valor + naipe: `A 2 3 4 5 6 7 Q J K` + `O` (ouros) `E` (espadas) `C` (copas) `P`
 | `baralho` | `?baralho=3P,2O,AO,KO,4E,5E,6E,7E,QE,JE,KE,AE,4O` | Fixa as primeiras cartas: 3 para J1, 3 para J2, 3 para J3, 3 para J4 e a 13ª é a vira. O resto do baralho é embaralhado. Também fixa as mãos seguintes se forem passadas mais 13, 26… cartas |
 | `placar` | `?placar=11-4` | Começa com Nós 11 × Eles 4 |
 
+### Esclarecimentos da revisão (contrato)
+
+- Os parâmetros `baralho` e `placar` valem para a **primeira partida** da página (a que começa no primeiro clique em `btn-nova-partida`). Depois do fim dessa partida, Nova partida começa do zero: placar 0 × 0 e baralho sorteado.
+- `resposta` e `decisao-onze` têm `data-dupla="nos"` ou `data-dupla="eles"`: a dupla que responde ao pedido ou decide a mão de onze.
+- Carta bloqueada tem o atributo `disabled`.
+- `resposta`, `decisao-onze` e `btn-aumentar` ficam com `hidden` quando não se aplicam.
+
 ## 4. Divisão de tarefas
 
 > ⚠️ **Modo atual: somente testes.** A fase GREEN (implementar o jogo) está desativada até segunda ordem. As tarefas abaixo são de **escrever os casos de teste**; o código do jogo não é feito. Cada teste fica **falhando pelo motivo certo**. Quando a implementação for liberada: [docs/FASE-GREEN.md](docs/FASE-GREEN.md).
