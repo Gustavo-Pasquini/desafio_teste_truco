@@ -77,3 +77,10 @@ test.each(ESCALA.slice(0, -1).map((v, i) => [v, ESCALA[i + 1]]))('TC-TR-30 escal
   await jogarVaza(user, jogadas);
   expect(screen.getByTestId('vaza-1')).toHaveTextContent('Eles');
 });
+
+// Vira 4O → manilha 5. Aqui a manilha mais FORTE é jogada primeiro (por J1), ao contrário do TC-TR-07.
+test.each([['5E', '5O'], ['5C', '5E'], ['5P', '5C']])('TC-TR-31 manilha %s vence %s', async (forte, fraca) => {
+  const user = await comBaralho(montarBaralho([forte, '7E', 'QE'], [fraca, '7C', 'QC'], ['6P', '7P', 'QP'], ['6C', '6E', 'JE'], '4O'));
+  await jogarVaza(user, { J1: forte, J2: fraca, J3: '6P', J4: '6C' });
+  expect(screen.getByTestId('vaza-1')).toHaveTextContent('Nós');
+});
