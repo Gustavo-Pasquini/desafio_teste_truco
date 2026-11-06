@@ -36,3 +36,18 @@ test('TC-TR-10 ordem de jogada: J1 → J2 → J3 → J4', async () => {
   await jogar(user, 'J3', 'AO');
   expect(screen.getByTestId('vez')).toHaveTextContent(/^J4$/);
 });
+
+// 1ª vaza: o 3C de J3 é a maior. 2ª vaza: o 3P de J3 de novo → Nós vence 2 vazas.
+const BARALHO_J3_VENCE = montarBaralho(['6E', '2E', '7E'], ['7C', '6C', 'QC'], ['3C', '3P', 'AP'], ['QE', 'JE', 'KE'], '4O');
+
+test('TC-TR-13 quem vence a vaza começa a próxima; duas vazas encerram a mão', async () => {
+  const user = await comBaralho(BARALHO_J3_VENCE);
+  await jogarVaza(user, { J1: '6E', J2: '7C', J3: '3C', J4: 'QE' });
+  expect(screen.getByTestId('vaza-1')).toHaveTextContent('Nós');
+  expect(screen.getByTestId('vez')).toHaveTextContent(/^J3$/);
+
+  await jogarVaza(user, { J3: '3P', J4: 'JE', J1: '2E', J2: '6C' });
+  expect(screen.getByTestId('placar-nos')).toHaveTextContent(/^1$/);
+  expect(screen.getByTestId('placar-eles')).toHaveTextContent(/^0$/);
+  maosCompletas(); // a 3ª vaza não foi jogada: já é a mão seguinte
+});
