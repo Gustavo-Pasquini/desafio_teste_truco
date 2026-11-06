@@ -117,3 +117,16 @@ test('TC-TR-14 1ª Nós, 2ª Eles, 3ª empata: leva quem venceu a 1ª', async ()
   expect(screen.getByTestId('placar-nos')).toHaveTextContent(/^1$/);
   expect(screen.getByTestId('placar-eles')).toHaveTextContent(/^0$/);
 });
+
+// As três vazas empatam: 3O × 3E, 2O × 2E, AO × AE (J3 e J4 jogam cartas menores).
+const BARALHO_TRES_EMPATES = montarBaralho(['3O', '2O', 'AO'], ['3E', '2E', 'AE'], ['4P', '6P', '7P'], ['4C', '6C', '7C'], '4O');
+
+test('TC-TR-15 três empates: ninguém pontua', async () => {
+  const user = await comBaralho(BARALHO_TRES_EMPATES);
+  await jogarVaza(user, { J1: '3O', J2: '3E', J3: '4P', J4: '4C' });
+  await jogarVaza(user, { J1: '2O', J2: '2E', J3: '6P', J4: '6C' });
+  await jogarVaza(user, { J1: 'AO', J2: 'AE', J3: '7P', J4: '7C' });
+  expect(screen.getByTestId('placar-nos')).toHaveTextContent(/^0$/);
+  expect(screen.getByTestId('placar-eles')).toHaveTextContent(/^0$/);
+  maosCompletas(); // nova mão distribuída
+});
