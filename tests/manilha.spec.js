@@ -28,3 +28,12 @@ test('TC-TR-06 força das cartas comuns: 3 > 2 > A > K', async () => {
   await jogarVaza(user, { J1: '3O', J2: '2O', J3: 'AO', J4: 'KO' });
   expect(screen.getByTestId('vaza-1')).toHaveTextContent('Nós');
 });
+
+// Vira 4O → as quatro manilhas (5) na mesma vaza: ♦ J1 < ♠ J2 < ♥ J3 < ♣ J4 (zap).
+const BARALHO_MANILHAS = montarBaralho(['5O', '6E', '7E'], ['5E', '6C', '7C'], ['5C', '6P', '7P'], ['5P', 'QE', 'QC'], '4O');
+
+test('TC-TR-07 ordem das manilhas: ouros < espadas < copas < paus (zap)', async () => {
+  const user = await comBaralho(BARALHO_MANILHAS);
+  await jogarVaza(user, { J1: '5O', J2: '5E', J3: '5C', J4: '5P' });
+  expect(screen.getByTestId('vaza-1')).toHaveTextContent('Eles');
+});
