@@ -20,13 +20,17 @@ test.each([
   expect(screen.getByTestId('manilha')).toHaveTextContent(new RegExp(`^${manilha}$`));
 });
 
-// Vira 4O → manilha 5. Comuns: 3 (J1) > 2 (J2) > A (J3) > K (J4).
-const BARALHO_COMUNS = montarBaralho(['3O', '6E', '7E'], ['2O', '6C', '7C'], ['AO', '6P', '7P'], ['KO', 'QE', 'QC'], '4O');
+// Vira 4O → manilha 5. Duas vazas, com o 3 nunca na 1ª nem na última posição:
+// 1ª: K (J1) · A (J2) · 3 (J3) · 2 (J4) → Nós.  2ª (J3 começa): K (J3) · 3 (J4) · 2 (J1) · A (J2) → Eles.
+// Um jogo que desse a vaza à 1ª carta, à última carta ou ao A erraria em pelo menos uma.
+const BARALHO_COMUNS = montarBaralho(['KO', '2O', '6E'], ['AO', 'AE', '6C'], ['3O', 'KE', '6P'], ['2E', '3E', '7C'], '4O');
 
 test('TC-TR-06 força das cartas comuns: 3 > 2 > A > K', async () => {
   const user = await comBaralho(BARALHO_COMUNS);
-  await jogarVaza(user, { J1: '3O', J2: '2O', J3: 'AO', J4: 'KO' });
+  await jogarVaza(user, { J1: 'KO', J2: 'AO', J3: '3O', J4: '2E' });
   expect(screen.getByTestId('vaza-1')).toHaveTextContent('Nós');
+  await jogarVaza(user, { J3: 'KE', J4: '3E', J1: '2O', J2: 'AE' });
+  expect(screen.getByTestId('vaza-2')).toHaveTextContent('Eles');
 });
 
 // Vira 4O → as quatro manilhas (5) na mesma vaza: ♦ J1 < ♠ J2 < ♥ J3 < ♣ J4 (zap).
