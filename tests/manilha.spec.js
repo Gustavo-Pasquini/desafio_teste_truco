@@ -42,11 +42,15 @@ test('TC-TR-07 ordem das manilhas: ouros < espadas < copas < paus (zap)', async 
   expect(screen.getByTestId('vaza-1')).toHaveTextContent('Eles');
 });
 
-// Vira 4O → 5O (J2) é a manilha mais fraca, mas vence os dois 3 da dupla Nós.
-const BARALHO_MANILHA_X_3 = montarBaralho(['3P', '6E', '7E'], ['5O', '6C', '7C'], ['3C', '6P', '7P'], ['4E', 'QE', 'QC'], '4O');
+// Vira 4O → manilha 5. A manilha nunca é a 1ª nem a última carta da vaza:
+// 1ª: 3P (J1) · 4E (J2) · 5O (J3, manilha mais fraca) · 3C (J4) → Nós.
+// 2ª (J3 começa): 6P (J3) · 5E (J4, manilha) · 3O (J1) · 2C (J2) → Eles.
+const BARALHO_MANILHA_X_3 = montarBaralho(['3P', '3O', '7E'], ['4E', '2C', '7C'], ['5O', '6P', '7P'], ['3C', '5E', 'QC'], '4O');
 
 test('TC-TR-08 a manilha mais fraca vence o 3', async () => {
   const user = await comBaralho(BARALHO_MANILHA_X_3);
-  await jogarVaza(user, { J1: '3P', J2: '5O', J3: '3C', J4: '4E' });
-  expect(screen.getByTestId('vaza-1')).toHaveTextContent('Eles');
+  await jogarVaza(user, { J1: '3P', J2: '4E', J3: '5O', J4: '3C' });
+  expect(screen.getByTestId('vaza-1')).toHaveTextContent('Nós');
+  await jogarVaza(user, { J3: '6P', J4: '5E', J1: '3O', J2: '2C' });
+  expect(screen.getByTestId('vaza-2')).toHaveTextContent('Eles');
 });
