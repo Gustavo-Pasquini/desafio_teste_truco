@@ -26,3 +26,13 @@ test('TC-TR-09 só joga quem tem a vez', async () => {
   expect(cartasNaMao('J2')).toHaveLength(3);
   expect(screen.getByTestId('vez')).toHaveTextContent(/^J1$/);
 });
+
+test('TC-TR-10 ordem de jogada: J1 → J2 → J3 → J4', async () => {
+  const user = await comBaralho(BARALHO_TURNO);
+  await jogar(user, 'J1', '3O');
+  expect(screen.getByTestId('vez')).toHaveTextContent(/^J2$/);
+  await jogar(user, 'J2', '2O');
+  expect(screen.getByTestId('vez')).toHaveTextContent(/^J3$/);
+  await jogar(user, 'J3', 'AO');
+  expect(screen.getByTestId('vez')).toHaveTextContent(/^J4$/);
+});
