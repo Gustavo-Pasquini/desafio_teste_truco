@@ -30,3 +30,13 @@ test('TC-TR-25 Nós escolhe jogar a mão de onze por 3 pontos', async () => {
   await user.click(screen.getByTestId('btn-jogar-onze'));
   expect(screen.getByTestId('valor-mao')).toHaveTextContent(/^3$/);
 });
+
+test('TC-TR-26 Nós corre da mão de onze e Eles ganha 1 ponto', async () => {
+  const user = await abrirMaoEspecial('11-4');
+  await user.click(screen.getByTestId('btn-correr-onze'));
+
+  expect(screen.getByTestId('placar-eles')).toHaveTextContent(/^5$/);
+  for (const jogador of ['J1', 'J2', 'J3', 'J4']) {
+    expect(cartasNaMao(jogador)).toHaveLength(3);
+  }
+});
