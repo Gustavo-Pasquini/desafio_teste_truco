@@ -132,3 +132,12 @@ test('TC-TR-15 três empates: ninguém pontua', async () => {
   expect(screen.getByTestId('placar-eles')).toHaveTextContent(/^0$/);
   maosCompletas(); // nova mão distribuída
 });
+
+// Os dois 3 são da dupla Nós (J1 e J3): não é empate, porque a maior de Eles é um 2.
+const BARALHO_IGUAIS_NA_DUPLA = montarBaralho(['3O', '6E', '7E'], ['2O', '6C', '7C'], ['3E', '6P', '7P'], ['2E', 'QE', 'QC'], '4O');
+
+test('TC-TR-32 cartas iguais na mesma dupla não empatam', async () => {
+  const user = await comBaralho(BARALHO_IGUAIS_NA_DUPLA);
+  await jogarVaza(user, { J1: '3O', J2: '2O', J3: '3E', J4: '2E' });
+  expect(screen.getByTestId('vaza-1')).toHaveTextContent('Nós');
+});
