@@ -141,3 +141,15 @@ test('TC-TR-32 cartas iguais na mesma dupla não empatam', async () => {
   await jogarVaza(user, { J1: '3O', J2: '2O', J3: '3E', J4: '2E' });
   expect(screen.getByTestId('vaza-1')).toHaveTextContent('Nós');
 });
+
+// 1ª: 3O × 3E (empate) · 2ª: 2O × 2E (empate) · 3ª: o AE de J2 vence.
+const BARALHO_DOIS_EMPATES = montarBaralho(['3O', '2O', 'QE'], ['3E', '2E', 'AE'], ['4P', '6P', '7P'], ['4C', '6C', 'KC'], '4O');
+
+test('TC-TR-33 1ª e 2ª empatam: a 3ª decide', async () => {
+  const user = await comBaralho(BARALHO_DOIS_EMPATES);
+  await jogarVaza(user, { J1: '3O', J2: '3E', J3: '4P', J4: '4C' });
+  await jogarVaza(user, { J1: '2O', J2: '2E', J3: '6P', J4: '6C' });
+  await jogarVaza(user, { J1: 'QE', J2: 'AE', J3: '7P', J4: 'KC' });
+  expect(screen.getByTestId('placar-eles')).toHaveTextContent(/^1$/);
+  expect(screen.getByTestId('placar-nos')).toHaveTextContent(/^0$/);
+});
