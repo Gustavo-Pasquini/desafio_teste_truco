@@ -1,7 +1,7 @@
 // Testes de pedidos e aumentos (Breno — B2, B3). Casos da seção 5 do PLANEJAMENTO.md.
 // Modo somente testes: o jogo ainda não existe, então estes testes FALHAM de propósito.
 import { test, expect } from 'vitest';
-import { abrirJogo, screen, montarBaralho, jogarVaza, cartasNaMao } from './helpers.js';
+import { abrirJogo, screen, montarBaralho, jogar, jogarVaza, cartasNaMao } from './helpers.js';
 
 // Vira 4O (manilha 5, ausente das mãos). J3 vence as duas primeiras vazas com 3C e 3P.
 const BARALHO_NOS_VENCE = montarBaralho(
@@ -99,4 +99,19 @@ test.each([
   await user.click(screen.getByTestId('btn-correr'));
 
   expect(screen.getByTestId(placar)).toHaveTextContent(new RegExp(`^${pontos}$`));
+});
+
+test('TC-TR-22 somente a dupla que recebeu o Truco pode pedir Seis', async () => {
+  const user = await abrirJogo({ baralho: BARALHO_NOS_VENCE });
+  await user.click(screen.getByTestId('btn-nova-partida'));
+  await user.click(screen.getByTestId('btn-truco'));
+  await user.click(screen.getByTestId('btn-aceitar'));
+
+  expect(screen.getByTestId('vez')).toHaveTextContent(/^J1$/);
+  expect(screen.getByTestId('btn-truco')).toBeDisabled();
+
+  await jogar(user, 'J1', '6E');
+  expect(screen.getByTestId('vez')).toHaveTextContent(/^J2$/);
+  expect(screen.getByTestId('btn-truco')).toHaveTextContent(/^Seis$/i);
+  expect(screen.getByTestId('btn-truco')).toBeEnabled();
 });
