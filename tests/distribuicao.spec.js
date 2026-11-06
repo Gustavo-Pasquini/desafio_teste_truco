@@ -22,3 +22,10 @@ test('TC-TR-01 tela inicial: placar 0 × 0 e botão Nova partida', async () => {
   expect(screen.getByTestId('placar-eles')).toHaveTextContent(/^0$/);
   expect(screen.getByTestId('btn-nova-partida')).toBeVisible();
 });
+
+test('TC-TR-02 distribuição: 3 cartas para cada jogador e vira na mesa', async () => {
+  await novaPartida();
+  for (const j of JOGADORES) expect(cartasNaMao(j)).toHaveLength(3);
+  expect(screen.getByTestId('vira')).toHaveAttribute('data-carta', expect.stringMatching(CODIGO));
+  expect(screen.getByTestId('vez')).toHaveTextContent(/^J1$/);
+});
