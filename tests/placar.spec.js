@@ -12,6 +12,15 @@ const BARALHO_NOS_VENCE = montarBaralho(
   '4O',
 );
 
+// Vira 4O (manilha 5, ausente das mãos). J2 vence as duas primeiras vazas para Eles.
+const BARALHO_ELES_VENCE = montarBaralho(
+  ['6E', '2E', '7E'],
+  ['3C', '3P', 'AP'],
+  ['7C', '6C', 'QC'],
+  ['QE', 'JE', 'KE'],
+  '4O',
+);
+
 async function vencerTrucoComNos(placar) {
   const user = await abrirJogo({ placar, baralho: BARALHO_NOS_VENCE });
   await user.click(screen.getByTestId('btn-nova-partida'));
@@ -41,4 +50,33 @@ test('TC-TR-24 Nova partida após o fim zera o placar e redistribui', async () =
   for (const jogador of ['J1', 'J2', 'J3', 'J4']) {
     expect(cartasNaMao(jogador)).toHaveLength(3);
   }
+});
+
+test.each([
+  {
+    caso: 'Nós passa de 12', placarInicial: '10-5', baralho: BARALHO_NOS_VENCE,
+    vazas: [
+      { J1: '6E', J2: '7C', J3: '3C', J4: 'QE' },
+      { J3: '3P', J4: 'JE', J1: '2E', J2: '6C' },
+    ],
+    placarNos: 13, placarEles: 5, mensagem: 'Nós venceram a partida!',
+  },
+  {
+    caso: 'Eles chega a 12', placarInicial: '5-9', baralho: BARALHO_ELES_VENCE,
+    vazas: [
+      { J1: '6E', J2: '3C', J3: '7C', J4: 'QE' },
+      { J2: '3P', J3: '6C', J4: 'JE', J1: '2E' },
+    ],
+    placarNos: 5, placarEles: 12, mensagem: 'Eles venceram a partida!',
+  },
+])('TC-TR-35 fim da partida: $caso', async ({ placarInicial, baralho, vazas, placarNos, placarEles, mensagem }) => {
+  const user = await abrirJogo({ placar: placarInicial, baralho });
+  await user.click(screen.getByTestId('btn-nova-partida'));
+  await user.click(screen.getByTestId('btn-truco'));
+  await user.click(screen.getByTestId('btn-aceitar'));
+  for (const vaza of vazas) await jogarVaza(user, vaza);
+
+  expect(screen.getByTestId('placar-nos')).toHaveTextContent(new RegExp(`^${placarNos}$`));
+  expect(screen.getByTestId('placar-eles')).toHaveTextContent(new RegExp(`^${placarEles}$`));
+  expect(screen.getByTestId('mensagem')).toHaveTextContent(new RegExp(`^${mensagem}$`));
 });
