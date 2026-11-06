@@ -1,7 +1,7 @@
 // Testes de mão de onze e mão de ferro (Breno — B5). Casos da seção 5 do PLANEJAMENTO.md.
 // Modo somente testes: o jogo ainda não existe, então estes testes FALHAM de propósito.
 import { test, expect } from 'vitest';
-import { abrirJogo, screen, montarBaralho, jogar, cartasNaMao } from './helpers.js';
+import { abrirJogo, screen, montarBaralho, jogar, jogarVaza, cartasNaMao } from './helpers.js';
 
 const BARALHO_MAO_ESPECIAL = montarBaralho(
   ['6E', '2E', '7E'],
@@ -58,4 +58,20 @@ test('TC-TR-27 não permite Truco durante toda a mão de onze', async () => {
     await jogar(user, jogador, carta);
     esperarTrucoIndisponivel();
   }
+});
+
+test('TC-TR-28 mão de ferro tem cartas fechadas e decide a partida', async () => {
+  const user = await abrirMaoEspecial('11-11');
+
+  const cartas = screen.getAllByTestId(/^carta-j[1-4]-\d$/);
+  expect(cartas).toHaveLength(12);
+  for (const carta of cartas) expect(carta).toHaveAttribute('data-face', 'baixo');
+  const botaoTruco = screen.queryByTestId('btn-truco');
+  expect(botaoTruco === null || botaoTruco.hidden || botaoTruco.disabled).toBe(true);
+  expect(screen.getByTestId('valor-mao')).toHaveTextContent(/^1$/);
+
+  await jogarVaza(user, { J1: '6E', J2: '7C', J3: '3C', J4: 'QE' });
+  await jogarVaza(user, { J3: '3P', J4: 'JE', J1: '2E', J2: '6C' });
+  expect(screen.getByTestId('placar-nos')).toHaveTextContent(/^12$/);
+  expect(screen.getByTestId('mensagem')).toHaveTextContent(/^Nós venceram a partida!$/);
 });
