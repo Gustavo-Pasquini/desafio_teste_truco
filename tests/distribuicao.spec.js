@@ -31,8 +31,9 @@ test('TC-TR-02 distribuição: 3 cartas para cada jogador e vira na mesa', async
 });
 
 test('TC-TR-03 baralho de 40 cartas: monte com 27 e sem 8, 9 ou 10 (20 partidas)', async () => {
+  const user = await abrirJogo();
   for (let i = 0; i < 20; i++) {
-    await novaPartida();
+    await user.click(screen.getByTestId('btn-nova-partida')); // o mesmo jogo distribui de novo
     expect(screen.getByTestId('monte-qtd')).toHaveTextContent(/^27$/);
     const cartas = cartasExibidas();
     expect(cartas).toHaveLength(13);
