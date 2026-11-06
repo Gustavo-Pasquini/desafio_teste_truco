@@ -226,7 +226,7 @@ Cada integrante é **dono de arquivos de teste diferentes** (coluna "Arquivos").
 | **G1** Setup: `package.json`, `vitest.config.js` (`environment: 'jsdom'`), `js/main.js` vazio, `.gitignore`, `index.html` esqueleto (elementos fixos da seção 3 **vazios**, sem texto nem atributos de estado), `tests/helpers.js` com `abrirJogo(params)` | `gustavo/g1-setup` | index.html, js/main.js, config, tests/helpers.js | — |
 | **G2** Baralho de 40 cartas e distribuição | `gustavo/g2-distribuicao` | tests/distribuicao.spec.js | TC-TR-01 a 04 |
 | **G3** Vira e manilha | `gustavo/g3-manilha` | tests/manilha.spec.js | TC-TR-05 a 08 |
-| **G4** Turnos e vencedor da vaza | `gustavo/g4-vaza` | tests/vaza.spec.js | TC-TR-09, 10, 13 |
+| **G4** Turnos e vencedor da vaza | `gustavo/g4-vaza` | tests/vaza.spec.js | TC-TR-09, 10, 13, 29 |
 | **G5** Empates e vencedor da mão | `gustavo/g5-empates` | tests/vaza.spec.js | TC-TR-11, 12, 14, 15 |
 
 ### Breno
@@ -252,9 +252,9 @@ Todos começam com `abrirJogo({ ... })` e clique em `btn-nova-partida`, salvo qu
 | TC-TR-03 | Baralho de 40 cartas | Repetir Nova partida 20 vezes, juntando os `data-carta` exibidos | `monte-qtd` = 27; nenhuma carta com valor 8, 9 ou 10 |
 | TC-TR-04 | Cartas não repetem | Repetir 20 vezes | As 13 cartas exibidas (12 nas mãos + vira) são todas diferentes |
 | TC-TR-05 | Manilha a partir da vira (parametrizado) | `baralho` com vira 4, 5, 6, 7, Q, J, K, A, 2, 3 | `manilha` = 5, 6, 7, Q, J, K, A, 2, 3, 4 respectivamente |
-| TC-TR-06 | Força das cartas comuns | `?baralho=3O,…` com vira 4 (manilha 5). J1 joga 3, J2 joga 2, J3 joga A, J4 joga K | `vaza-1` = Nós |
+| TC-TR-06 | Força das cartas comuns | Vira 4 (manilha 5). 1ª vaza: J1 K, J2 A, **J3 3**, J4 2. 2ª vaza (J3 começa): J3 K, **J4 3**, J1 2, J2 A | `vaza-1` = Nós e `vaza-2` = Eles (o 3 vence sem ser a 1ª nem a última carta; o A não é a maior) |
 | TC-TR-07 | Ordem das manilhas | Vira 4. J1 joga 5O, J2 joga 5E, J3 joga 5C, J4 joga 5P | `vaza-1` = Eles (zap de J4 vence) |
-| TC-TR-08 | Manilha vence o 3 | Vira 4. J1 joga 3P, J2 joga 5O, J3 joga 3C, J4 joga 4E | `vaza-1` = Eles |
+| TC-TR-08 | Manilha vence o 3 | Vira 4. 1ª vaza: J1 3P, J2 4E, **J3 5O**, J4 3C. 2ª vaza (J3 começa): J3 6P, **J4 5E**, J1 3O, J2 2C | `vaza-1` = Nós e `vaza-2` = Eles (a manilha vence o 3 sem ser a 1ª nem a última carta) |
 | TC-TR-09 | Só joga quem tem a vez | Clicar uma carta de J2 quando `vez` = J1 | Nada muda em `mesa`; `vez` continua J1 |
 | TC-TR-10 | Ordem de jogada | J1 joga | `vez` = J2; depois J3; depois J4 |
 | TC-TR-11 | Empate na 1ª vaza | J1 3O, J2 3E (maiores empatam), J3 e J4 cartas menores; 2ª vaza vencida por Eles | `vaza-1` = Empate; mão para Eles; `placar-eles` = 1 |
@@ -262,6 +262,7 @@ Todos começam com `abrirJogo({ ... })` e clique em `btn-nova-partida`, salvo qu
 | TC-TR-13 | Vencedor da vaza começa a próxima / 2 vazas encerram a mão | J3 vence a 1ª | `vez` = J3; Nós vence a 2ª → `placar-nos` = 1, nova mão distribuída, sem 3ª vaza |
 | TC-TR-14 | 1ª Nós, 2ª Eles, 3ª empata | Baralho montado para isso | Mão para Nós |
 | TC-TR-15 | Três empates | Baralho montado com as três vazas empatadas | Ninguém pontua (placar 0 × 0); nova mão |
+| TC-TR-29 | Só a mão da vez para cima | Nova partida; J1 joga uma carta | Antes: cartas de J1 `data-face="cima"`, de J2–J4 `"baixo"`. Depois: J2 `"cima"`, J1, J3 e J4 `"baixo"` |
 
 ### Breno — apostas, placar, mão de onze e de ferro
 
