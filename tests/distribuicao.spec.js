@@ -29,3 +29,13 @@ test('TC-TR-02 distribuição: 3 cartas para cada jogador e vira na mesa', async
   expect(screen.getByTestId('vira')).toHaveAttribute('data-carta', expect.stringMatching(CODIGO));
   expect(screen.getByTestId('vez')).toHaveTextContent(/^J1$/);
 });
+
+test('TC-TR-03 baralho de 40 cartas: monte com 27 e sem 8, 9 ou 10 (20 partidas)', async () => {
+  for (let i = 0; i < 20; i++) {
+    await novaPartida();
+    expect(screen.getByTestId('monte-qtd')).toHaveTextContent(/^27$/);
+    const cartas = cartasExibidas();
+    expect(cartas).toHaveLength(13);
+    for (const c of cartas) expect(c).toMatch(CODIGO);
+  }
+});
