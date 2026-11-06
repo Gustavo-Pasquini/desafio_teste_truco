@@ -105,3 +105,15 @@ test('TC-TR-12 vence a 1ª e empata a 2ª: leva quem venceu a 1ª', async () => 
   expect(screen.getByTestId('placar-nos')).toHaveTextContent(/^1$/);
   maosCompletas(); // a 3ª vaza não é jogada
 });
+
+// 1ª: 3O (Nós) vence · 2ª: AP (Eles) vence · 3ª: 2O (Nós) × 2E (Eles) → empate.
+const BARALHO_EMPATE_3A = montarBaralho(['3O', '6E', '2O'], ['7C', 'AP', '2E'], ['QP', '7P', 'JE'], ['QE', 'KE', '6P'], '4O');
+
+test('TC-TR-14 1ª Nós, 2ª Eles, 3ª empata: leva quem venceu a 1ª', async () => {
+  const user = await comBaralho(BARALHO_EMPATE_3A);
+  await jogarVaza(user, { J1: '3O', J2: '7C', J3: 'QP', J4: 'QE' });
+  await jogarVaza(user, { J1: '6E', J2: 'AP', J3: '7P', J4: 'KE' });
+  await jogarVaza(user, { J1: '2O', J2: '2E', J3: 'JE', J4: '6P' });
+  expect(screen.getByTestId('placar-nos')).toHaveTextContent(/^1$/);
+  expect(screen.getByTestId('placar-eles')).toHaveTextContent(/^0$/);
+});
