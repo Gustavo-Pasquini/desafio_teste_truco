@@ -83,3 +83,20 @@ test('TC-TR-20 aumentos levam a mão de Truco até Doze', async () => {
   await user.click(screen.getByTestId('btn-aceitar'));
   expect(screen.getByTestId('valor-mao')).toHaveTextContent(/^12$/);
 });
+
+test.each([
+  { pedido: 'Seis', aumentos: 1, placar: 'placar-eles', pontos: 3 },
+  { pedido: 'Nove', aumentos: 2, placar: 'placar-nos', pontos: 6 },
+  { pedido: 'Doze', aumentos: 3, placar: 'placar-eles', pontos: 9 },
+])('TC-TR-21 correr do $pedido dá $pontos pontos a quem aumentou', async ({ aumentos, placar, pontos }) => {
+  const user = await abrirJogo();
+  await user.click(screen.getByTestId('btn-nova-partida'));
+  await user.click(screen.getByTestId('btn-truco'));
+
+  for (let i = 0; i < aumentos; i++) {
+    await user.click(screen.getByTestId('btn-aumentar'));
+  }
+  await user.click(screen.getByTestId('btn-correr'));
+
+  expect(screen.getByTestId(placar)).toHaveTextContent(new RegExp(`^${pontos}$`));
+});
