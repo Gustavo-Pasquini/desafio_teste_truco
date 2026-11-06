@@ -19,6 +19,8 @@ test('TC-TR-16 botão Truco disponível no início da mão', async () => {
   expect(screen.getByTestId('valor-mao')).toHaveTextContent(/^1$/);
   expect(screen.getByTestId('btn-truco')).toHaveTextContent(/^Truco$/i);
   expect(screen.getByTestId('btn-truco')).toBeEnabled();
+  expect(screen.getByTestId('resposta')).not.toBeVisible(); // nenhum pedido ainda
+  expect(screen.getByTestId('decisao-onze')).not.toBeVisible(); // não é mão de onze
 });
 
 test('TC-TR-17 pedir Truco exibe respostas para Eles e bloqueia as cartas', async () => {
