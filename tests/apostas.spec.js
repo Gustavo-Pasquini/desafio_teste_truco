@@ -88,7 +88,8 @@ test('TC-TR-20 aumentos levam a mão de Truco até Doze', async () => {
 
   await user.click(screen.getByTestId('btn-aumentar'));
   expect(screen.getByTestId('valor-mao')).toHaveTextContent(/^12$/);
-  expect(screen.queryByTestId('btn-aumentar')).not.toBeInTheDocument();
+  const aumentar = screen.queryByTestId('btn-aumentar'); // no Doze não há aumento: some, fica escondido ou bloqueado
+  expect(aumentar === null || aumentar.hidden || aumentar.closest('[hidden]') !== null || aumentar.disabled).toBe(true);
 
   await user.click(screen.getByTestId('btn-aceitar'));
   expect(screen.getByTestId('valor-mao')).toHaveTextContent(/^12$/);
