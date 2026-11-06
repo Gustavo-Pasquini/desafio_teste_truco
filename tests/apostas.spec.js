@@ -60,3 +60,26 @@ test('TC-TR-19 correr do Truco dá 1 ponto a Nós e distribui nova mão', async 
     expect(cartasNaMao(jogador)).toHaveLength(3);
   }
 });
+
+test('TC-TR-20 aumentos levam a mão de Truco até Doze', async () => {
+  const user = await abrirJogo();
+  await user.click(screen.getByTestId('btn-nova-partida'));
+
+  await user.click(screen.getByTestId('btn-truco'));
+  expect(screen.getByTestId('valor-mao')).toHaveTextContent(/^3$/);
+
+  await user.click(screen.getByTestId('btn-aumentar'));
+  expect(screen.getByTestId('valor-mao')).toHaveTextContent(/^6$/);
+  expect(screen.getByTestId('btn-aumentar')).toHaveTextContent(/^Nove$/i);
+
+  await user.click(screen.getByTestId('btn-aumentar'));
+  expect(screen.getByTestId('valor-mao')).toHaveTextContent(/^9$/);
+  expect(screen.getByTestId('btn-aumentar')).toHaveTextContent(/^Doze$/i);
+
+  await user.click(screen.getByTestId('btn-aumentar'));
+  expect(screen.getByTestId('valor-mao')).toHaveTextContent(/^12$/);
+  expect(screen.queryByTestId('btn-aumentar')).not.toBeInTheDocument();
+
+  await user.click(screen.getByTestId('btn-aceitar'));
+  expect(screen.getByTestId('valor-mao')).toHaveTextContent(/^12$/);
+});
