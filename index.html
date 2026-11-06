@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Truco paulista</title>
+</head>
+<body>
+  <!--
+    ESQUELETO DA TELA (contrato da seção 3 do PLANEJAMENTO.md).
+    Elementos fixos, VAZIOS: sem texto, sem valor e sem atributos de estado
+    (data-estado, disabled, hidden). Os testes abrem este HTML.
+    Fase GREEN desativada: o jogo (js/) ainda não existe.
+  -->
+  <header>
+    <button data-testid="btn-nova-partida"></button>
+    <span data-testid="placar-nos"></span>
+    <span data-testid="placar-eles"></span>
+    <span data-testid="valor-mao"></span>
+  </header>
+  <section>
+    <div data-testid="vira"></div>
+    <span data-testid="manilha"></span>
+    <span data-testid="monte-qtd"></span>
+    <span data-testid="vez"></span>
+  </section>
+  <section>
+    <div data-testid="mao-j1"></div>
+    <div data-testid="mao-j2"></div>
+    <div data-testid="mao-j3"></div>
+    <div data-testid="mao-j4"></div>
+  </section>
+  <section>
+    <div data-testid="mesa"></div>
+    <div data-testid="vazas"></div>
+  </section>
+  <section>
+    <button data-testid="btn-truco"></button>
+    <div data-testid="resposta">
+      <button data-testid="btn-aceitar"></button>
+      <button data-testid="btn-correr"></button>
+      <button data-testid="btn-aumentar"></button>
+    </div>
+    <div data-testid="decisao-onze">
+      <button data-testid="btn-jogar-onze"></button>
+      <button data-testid="btn-correr-onze"></button>
+    </div>
+  </section>
+  <footer>
+    <p data-testid="mensagem"></p>
+  </footer>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
