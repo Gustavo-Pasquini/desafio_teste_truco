@@ -42,4 +42,46 @@ O projeto está preparado para **Claude Code** e **Codex**. Os dois escrevem os 
 - Claude Code: `/tdd G2` · Codex: `$tdd G2` · depois, "go" escreve o próximo caso de teste.
 - Detalhes, técnicas e fontes: [docs/TDD-COM-IA.md](docs/TDD-COM-IA.md).
 
-> Status: em planejamento. A tabela "ID → arquivo → o que verifica" será preenchida aqui conforme os testes forem escritos (tarefa B1).
+### ID → arquivo → o que verifica
+
+| ID | Arquivo | O que verifica |
+|---|---|---|
+| TC-TR-01 | `tests/distribuicao.spec.js` | Estado inicial do placar e botão de nova partida |
+| TC-TR-02 | `tests/distribuicao.spec.js` | Distribuição de três cartas, vira e primeiro jogador |
+| TC-TR-03 | `tests/distribuicao.spec.js` | Baralho de 40 cartas sem 8, 9 e 10 |
+| TC-TR-04 | `tests/distribuicao.spec.js` | Ausência de cartas repetidas na distribuição |
+| TC-TR-05 | `tests/manilha.spec.js` | Valor da manilha calculado a partir da vira |
+| TC-TR-06 | `tests/manilha.spec.js` | Escala de força das cartas comuns |
+| TC-TR-07 | `tests/manilha.spec.js` | Ordem dos naipes entre as manilhas |
+| TC-TR-08 | `tests/manilha.spec.js` | Manilha vencendo o 3 |
+| TC-TR-09 | `tests/vaza.spec.js` | Bloqueio de jogada fora da vez |
+| TC-TR-10 | `tests/vaza.spec.js` | Ordem de jogada entre J1, J2, J3 e J4 |
+| TC-TR-11 | `tests/vaza.spec.js` | Empate na primeira vaza e decisão pela segunda |
+| TC-TR-12 | `tests/vaza.spec.js` | Vitória da primeira vaza seguida de empate |
+| TC-TR-13 | `tests/vaza.spec.js` | Vencedor iniciando a vaza seguinte e encerramento em duas vazas |
+| TC-TR-14 | `tests/vaza.spec.js` | Decisão da mão quando a terceira vaza empata |
+| TC-TR-15 | `tests/vaza.spec.js` | Três empates sem pontuação |
+| TC-TR-16 | `tests/apostas.spec.js` | Valor inicial da mão e disponibilidade do Truco |
+| TC-TR-17 | `tests/apostas.spec.js` | Opções de resposta e bloqueio das cartas após pedir Truco |
+| TC-TR-18 | `tests/apostas.spec.js` | Truco aceito valendo três pontos |
+| TC-TR-19 | `tests/apostas.spec.js` | Fuga do Truco concedendo um ponto ao solicitante |
+| TC-TR-20 | `tests/apostas.spec.js` | Sequência de aumentos até Doze |
+| TC-TR-21 | `tests/apostas.spec.js` | Pontuação ao correr de Seis, Nove ou Doze |
+| TC-TR-22 | `tests/apostas.spec.js` | Direito de aumentar reservado à dupla adversária |
+| TC-TR-23 | `tests/placar.spec.js` | Fim da partida ao atingir 12 pontos |
+| TC-TR-24 | `tests/placar.spec.js` | Reinício da partida após o fim |
+| TC-TR-25 | `tests/mao-de-onze.spec.js` | Decisão de jogar a mão de onze |
+| TC-TR-26 | `tests/mao-de-onze.spec.js` | Decisão de correr da mão de onze |
+| TC-TR-27 | `tests/mao-de-onze.spec.js` | Proibição de Truco na mão de onze |
+| TC-TR-28 | `tests/mao-de-onze.spec.js` | Cartas fechadas e regras da mão de ferro |
+| TC-TR-29 | `tests/vaza.spec.js` | Apenas a mão do jogador da vez com cartas abertas |
+| TC-TR-30 | `tests/manilha.spec.js` | Escala completa entre cartas comuns vizinhas |
+| TC-TR-31 | `tests/manilha.spec.js` | Cada manilha vencendo a imediatamente mais fraca |
+| TC-TR-32 | `tests/vaza.spec.js` | Cartas iguais da mesma dupla sem provocar empate |
+| TC-TR-33 | `tests/vaza.spec.js` | Terceira vaza decidindo após dois empates |
+| TC-TR-34 | `tests/vaza.spec.js` | Terceira vaza decidindo uma mão empatada em 1 a 1 |
+| TC-TR-35 | `tests/placar.spec.js` | Fim da partida ao ultrapassar ou atingir 12 pontos |
+| TC-TR-36 | `tests/mao-de-onze.spec.js` | Mão de onze da dupla Eles |
+| TC-TR-37 | `tests/vaza.spec.js` | Rodízio do jogador que inicia cada mão |
+| TC-TR-38 | `tests/vaza.spec.js` | Jogador inicial mantido após empate na vaza |
+| TC-TR-39 | `tests/placar.spec.js` | Acúmulo do placar entre mãos |
