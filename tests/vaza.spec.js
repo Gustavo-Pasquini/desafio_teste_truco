@@ -37,6 +37,16 @@ test('TC-TR-10 ordem de jogada: J1 → J2 → J3 → J4', async () => {
   expect(screen.getByTestId('vez')).toHaveTextContent(/^J4$/);
 });
 
+test('TC-TR-29 só a mão do jogador da vez fica virada para cima', async () => {
+  const user = await comBaralho(BARALHO_TURNO);
+  const faces = () => Object.fromEntries(JOGADORES.map((j) => [j, cartasNaMao(j).map((c) => c.getAttribute('data-face'))]));
+  const cima = (n) => Array(n).fill('cima');
+  const baixo = (n) => Array(n).fill('baixo');
+  expect(faces()).toEqual({ J1: cima(3), J2: baixo(3), J3: baixo(3), J4: baixo(3) });
+  await jogar(user, 'J1', '3O');
+  expect(faces()).toEqual({ J1: baixo(2), J2: cima(3), J3: baixo(3), J4: baixo(3) });
+});
+
 // 1ª vaza: o 3C de J3 é a maior. 2ª vaza: o 3P de J3 de novo → Nós vence 2 vazas.
 const BARALHO_J3_VENCE = montarBaralho(['6E', '2E', '7E'], ['7C', '6C', 'QC'], ['3C', '3P', 'AP'], ['QE', 'JE', 'KE'], '4O');
 
