@@ -92,10 +92,13 @@ test('TC-TR-36 Eles decide sua mão de onze e pode correr', async () => {
   const user = await abrirMaoEspecial('4-11');
 
   expect(screen.getByTestId('decisao-onze')).toBeVisible();
-  expect(screen.getByTestId('decisao-onze')).toHaveTextContent(/Eles/i);
+  expect(screen.getByTestId('decisao-onze')).toHaveAttribute('data-dupla', 'eles');
   const cartasDoParceiro = cartasNaMao('J4');
   expect(cartasDoParceiro).toHaveLength(3);
   for (const carta of cartasDoParceiro) expect(carta).toHaveAttribute('data-face', 'cima');
+  for (const adversario of ['J1', 'J3']) {
+    for (const carta of cartasNaMao(adversario)) expect(carta).toHaveAttribute('data-face', 'baixo');
+  }
 
   await user.click(screen.getByTestId('btn-correr-onze'));
   expect(screen.getByTestId('placar-nos')).toHaveTextContent(/^5$/);
