@@ -26,17 +26,18 @@ test('TC-TR-16 botão Truco disponível no início da mão', async () => {
 test('TC-TR-17 pedir Truco exibe respostas para Eles e bloqueia as cartas', async () => {
   const user = await abrirJogo();
   await user.click(screen.getByTestId('btn-nova-partida'));
+  expect(screen.getByTestId('resposta')).not.toBeVisible(); // só aparece depois do pedido
   await user.click(screen.getByTestId('btn-truco'));
 
   expect(screen.getByTestId('resposta')).toBeVisible();
-  expect(screen.getByTestId('resposta')).toHaveTextContent(/Eles/i);
+  expect(screen.getByTestId('resposta')).toHaveAttribute('data-dupla', 'eles');
   expect(screen.getByTestId('btn-aceitar')).toHaveTextContent(/^Aceitar$/i);
   expect(screen.getByTestId('btn-correr')).toHaveTextContent(/^Correr$/i);
   expect(screen.getByTestId('btn-aumentar')).toHaveTextContent(/^Seis$/i);
 
   const cartas = screen.getAllByTestId(/^carta-j[1-4]-\d$/);
   expect(cartas).toHaveLength(12);
-  for (const carta of cartas) expect(carta).toBeDisabled();
+  for (const carta of cartas) expect(carta).toHaveAttribute('disabled');
 });
 
 test('TC-TR-18 aceitar Truco faz a mão valer 3 pontos', async () => {
