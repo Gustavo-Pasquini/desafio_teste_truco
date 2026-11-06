@@ -54,3 +54,26 @@ test('TC-TR-08 a manilha mais fraca vence o 3', async () => {
   await jogarVaza(user, { J3: '6P', J4: '5E', J1: '3O', J2: '2C' });
   expect(screen.getByTestId('vaza-2')).toHaveTextContent('Eles');
 });
+
+// Escala das comuns, da menor para a maior. Cada par vizinho é testado com uma vira que
+// não transforma nenhuma das duas cartas em manilha.
+const ESCALA = ['4', '5', '6', '7', 'Q', 'J', 'K', 'A', '2', '3'];
+const TODAS_AS_CARTAS = ESCALA.flatMap((v) => ['O', 'E', 'C', 'P'].map((n) => `${v}${n}`));
+
+function baralhoDoPar(menor, maior) {
+  const vira = menor === '4' ? 'KP' : '3P'; // manilha A (no par 4 < 5) ou 4 (nos outros pares)
+  const manilha = menor === '4' ? 'A' : '4';
+  const fraca = menor === '4' ? '4' : '5'; // a comum mais fraca com essa vira
+  const jogadas = { J1: `${menor}O`, J2: `${maior}O`, J3: `${fraca}E`, J4: `${fraca}C` };
+  const usadas = new Set([...Object.values(jogadas), vira]);
+  const resto = TODAS_AS_CARTAS.filter((c) => !usadas.has(c) && c[0] !== manilha);
+  const mao = (j, i) => [jogadas[j], resto[i * 2], resto[i * 2 + 1]];
+  return { baralho: montarBaralho(mao('J1', 0), mao('J2', 1), mao('J3', 2), mao('J4', 3), vira), jogadas };
+}
+
+test.each(ESCALA.slice(0, -1).map((v, i) => [v, ESCALA[i + 1]]))('TC-TR-30 escala das comuns: %s perde para %s', async (menor, maior) => {
+  const { baralho, jogadas } = baralhoDoPar(menor, maior);
+  const user = await comBaralho(baralho);
+  await jogarVaza(user, jogadas);
+  expect(screen.getByTestId('vaza-1')).toHaveTextContent('Eles');
+});
