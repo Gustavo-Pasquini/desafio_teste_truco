@@ -52,8 +52,14 @@ test('TC-TR-18 aceitar Truco faz a mão valer 3 pontos', async () => {
   expect(screen.getByTestId('placar-nos')).toHaveTextContent(/^3$/);
 });
 
+// Duas mãos fixas: as cartas da 2ª mão (J1 = 7E, KE, AO) só aparecem se a mão for redistribuída.
+const BARALHO_DUAS_MAOS = [
+  BARALHO_NOS_VENCE,
+  montarBaralho(['7E', 'KE', 'AO'], ['3E', '2C', 'QC'], ['6P', '7P', '3O'], ['QE', 'JE', '6C'], '4O'),
+].join(',');
+
 test('TC-TR-19 correr do Truco dá 1 ponto a Nós e distribui nova mão', async () => {
-  const user = await abrirJogo();
+  const user = await abrirJogo({ baralho: BARALHO_DUAS_MAOS });
   await user.click(screen.getByTestId('btn-nova-partida'));
   await user.click(screen.getByTestId('btn-truco'));
   await user.click(screen.getByTestId('btn-correr'));
@@ -62,6 +68,7 @@ test('TC-TR-19 correr do Truco dá 1 ponto a Nós e distribui nova mão', async 
   for (const jogador of ['J1', 'J2', 'J3', 'J4']) {
     expect(cartasNaMao(jogador)).toHaveLength(3);
   }
+  expect(cartasNaMao('J1').map((c) => c.getAttribute('data-carta')).sort()).toEqual(['7E', 'AO', 'KE']); // é a 2ª mão
 });
 
 test('TC-TR-20 aumentos levam a mão de Truco até Doze', async () => {
