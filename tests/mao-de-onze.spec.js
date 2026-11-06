@@ -36,14 +36,21 @@ test('TC-TR-25 Nós escolhe jogar a mão de onze por 3 pontos', async () => {
   expect(screen.getByTestId('decisao-onze')).not.toBeVisible();
 });
 
+// Duas mãos fixas: as cartas da 2ª mão (J1 = 7E, KE, AO) só aparecem se a mão for redistribuída.
+const BARALHO_DUAS_MAOS = [
+  BARALHO_MAO_ESPECIAL,
+  montarBaralho(['7E', 'KE', 'AO'], ['3E', '2C', 'QC'], ['6P', '7P', '3O'], ['QE', 'JE', '6C'], '4O'),
+].join(',');
+
 test('TC-TR-26 Nós corre da mão de onze e Eles ganha 1 ponto', async () => {
-  const user = await abrirMaoEspecial('11-4');
+  const user = await abrirMaoEspecial('11-4', BARALHO_DUAS_MAOS);
   await user.click(screen.getByTestId('btn-correr-onze'));
 
   expect(screen.getByTestId('placar-eles')).toHaveTextContent(/^5$/);
   for (const jogador of ['J1', 'J2', 'J3', 'J4']) {
     expect(cartasNaMao(jogador)).toHaveLength(3);
   }
+  expect(cartasNaMao('J1').map((c) => c.getAttribute('data-carta')).sort()).toEqual(['7E', 'AO', 'KE']); // é a 2ª mão
 });
 
 test('TC-TR-27 não permite Truco durante toda a mão de onze', async () => {
