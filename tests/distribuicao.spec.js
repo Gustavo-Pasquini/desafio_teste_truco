@@ -39,3 +39,12 @@ test('TC-TR-03 baralho de 40 cartas: monte com 27 e sem 8, 9 ou 10 (20 partidas)
     for (const c of cartas) expect(c).toMatch(CODIGO);
   }
 });
+
+test('TC-TR-04 as 13 cartas à vista não se repetem (20 partidas)', async () => {
+  for (let i = 0; i < 20; i++) {
+    await novaPartida();
+    const cartas = cartasExibidas();
+    expect(cartas).toHaveLength(13);
+    expect(new Set(cartas).size).toBe(13);
+  }
+});
