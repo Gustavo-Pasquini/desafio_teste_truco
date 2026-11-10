@@ -1,6 +1,5 @@
 // Testes do baralho e da distribuição (Gustavo — G2). Casos da seção 5 do PLANEJAMENTO.md.
 // Modo somente testes: o jogo ainda não existe, então estes testes FALHAM de propósito.
-import { test, expect } from 'vitest';
 import { abrirJogo, screen, cartasNaMao } from './helpers.js';
 
 const JOGADORES = ['J1', 'J2', 'J3', 'J4'];

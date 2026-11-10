@@ -1,6 +1,5 @@
 // Testes de vira, manilha e força das cartas (Gustavo — G3). Casos da seção 5 do PLANEJAMENTO.md.
 // Modo somente testes: o jogo ainda não existe, então estes testes FALHAM de propósito.
-import { test, expect } from 'vitest';
 import { abrirJogo, screen, montarBaralho, jogarVaza } from './helpers.js';
 
 async function comBaralho(baralho) {
