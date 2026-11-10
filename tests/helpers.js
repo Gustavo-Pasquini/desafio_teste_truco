@@ -39,14 +39,13 @@ export const cartasNaMao = (jogador) => {
   return within(screen.getByTestId(`mao-${j}`)).queryAllByTestId(new RegExp(`^carta-${j}-\\d$`));
 };
 
-/** Falha como uma asserção (AssertionError), com mensagem própria. */
-function exigir(valor, mensagem) {
-  if (valor === undefined) {
-    const erro = new Error(mensagem);
-    erro.name = 'AssertionError';
-    throw erro;
-  }
-}
+// Matcher próprio: falha como qualquer expect(), mas com uma mensagem que explica o cenário.
+expect.extend({
+  toExistir(recebido, mensagem) {
+    return { pass: recebido !== undefined, message: () => `expect(valor).toExistir()\n\n${mensagem}` };
+  },
+});
+const exigir = (valor, mensagem) => expect(valor).toExistir(mensagem);
 
 /** O jogador clica na carta de código `codigo` (ex.: '3P') da própria mão. */
 export async function jogar(user, jogador, codigo) {
