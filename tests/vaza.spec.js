@@ -1,7 +1,6 @@
 // Testes de turnos, vazas e empates (Gustavo — G4, G5). Casos da seção 5 do PLANEJAMENTO.md.
 // Modo somente testes: o jogo ainda não existe, então estes testes FALHAM de propósito.
 // Todos os baralhos usam a vira 4O (manilha = 5), e nenhum 5 aparece nas mãos: só cartas comuns.
-import { test, expect } from 'vitest';
 import { abrirJogo, screen, montarBaralho, jogar, jogarVaza, cartasNaMao } from './helpers.js';
 
 const JOGADORES = ['J1', 'J2', 'J3', 'J4'];

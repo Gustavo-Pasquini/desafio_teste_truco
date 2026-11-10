@@ -1,6 +1,5 @@
 // Testes de mão de onze e mão de ferro (Breno — B5). Casos da seção 5 do PLANEJAMENTO.md.
 // Modo somente testes: o jogo ainda não existe, então estes testes FALHAM de propósito.
-import { test, expect } from 'vitest';
 import { abrirJogo, screen, montarBaralho, jogar, jogarVaza, cartasNaMao } from './helpers.js';
 
 const BARALHO_MAO_ESPECIAL = montarBaralho(

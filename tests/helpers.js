@@ -1,10 +1,9 @@
 // Helpers dos testes de interface (tarefa G1). Contrato: seção 3 do PLANEJAMENTO.md.
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { expect, vi } from 'vitest';
 import { screen, within } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
-import '@testing-library/jest-dom/vitest';
+import '@testing-library/jest-dom';
 
 // Caminho a partir da raiz (no ambiente jsdom, `new URL(..., import.meta.url)` não funciona com o fs).
 const html = readFileSync(resolve(process.cwd(), 'index.html'), 'utf8');
@@ -13,13 +12,13 @@ const corpo = html.match(/<body[^>]*>([\s\S]*)<\/body>/)[1];
 /**
  * Abre o jogo como um jogador abriria a página.
  * @param {Record<string,string>} params parâmetros de URL da seção 3 (cenário fixo)
- * @param {object} opcoesUser repassado a userEvent.setup (ex.: { advanceTimers: vi.advanceTimersByTime })
+ * @param {object} opcoesUser repassado a userEvent.setup (ex.: { advanceTimers: jest.advanceTimersByTime })
  * @returns user do user-event, para clicar como o jogador
  */
 export async function abrirJogo(params = {}, opcoesUser = {}) {
   window.history.replaceState({}, '', '/?' + new URLSearchParams(params));
   document.body.innerHTML = corpo;
-  vi.resetModules();
+  jest.resetModules();
   await import('../js/main.js');
   return userEvent.setup(opcoesUser);
 }
@@ -40,10 +39,19 @@ export const cartasNaMao = (jogador) => {
   return within(screen.getByTestId(`mao-${j}`)).queryAllByTestId(new RegExp(`^carta-${j}-\\d$`));
 };
 
+/** Falha como uma asserção (AssertionError), com mensagem própria. */
+function exigir(valor, mensagem) {
+  if (valor === undefined) {
+    const erro = new Error(mensagem);
+    erro.name = 'AssertionError';
+    throw erro;
+  }
+}
+
 /** O jogador clica na carta de código `codigo` (ex.: '3P') da própria mão. */
 export async function jogar(user, jogador, codigo) {
   const carta = cartasNaMao(jogador).find((c) => c.getAttribute('data-carta') === codigo);
-  expect(carta, `a carta ${codigo} não está na mão de ${jogador}`).toBeDefined();
+  exigir(carta, `a carta ${codigo} não está na mão de ${jogador}`);
   await user.click(carta);
 }
 
@@ -54,7 +62,7 @@ export async function jogar(user, jogador, codigo) {
 export async function jogarVaza(user, cartas) {
   for (let i = 0; i < 4; i++) {
     const vez = screen.getByTestId('vez').textContent.trim();
-    expect(cartas[vez], `é a vez de "${vez}", mas a vaza não tem carta para ele`).toBeDefined();
+    exigir(cartas[vez], `é a vez de "${vez}", mas a vaza não tem carta para ele`);
     await jogar(user, vez, cartas[vez]);
   }
 }
