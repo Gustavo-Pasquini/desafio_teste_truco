@@ -32,6 +32,7 @@ Truco paulista com **2 duplas (4 jogadores)**: **casos de teste de interface em 
 - **Mão de onze:** a dupla com 11 pontos vê as cartas do parceiro e decide **Jogar** (a mão vale 3) ou **Correr** (adversário ganha 1). Não existe truco na mão de onze.
 - **Mão de ferro (11 × 11):** todos jogam com as cartas viradas para baixo, sem truco, vale 1; quem vencer a mão vence a partida.
 - **Modo de jogo:** 4 pessoas no mesmo computador (hotseat). Só a mão do jogador da vez fica com as cartas para cima.
+- **Dicas:** cartas que são manilha têm `data-manilha="true"`. Na mesa, cada carta tem `data-carta`, e a que está ganhando a vaza tem `data-vencendo="true"`.
 
 ## 2. Stack, comandos e estrutura
 
@@ -237,6 +238,7 @@ Cada integrante é **dono de arquivos de teste diferentes** (coluna "Arquivos").
 | **G3** Vira e manilha | `gustavo/g3-manilha` | tests/manilha.spec.js | TC-TR-05 a 08, 30, 31 |
 | **G4** Turnos e vencedor da vaza | `gustavo/g4-vaza` | tests/vaza.spec.js | TC-TR-09, 10, 13, 29, 37 |
 | **G5** Empates e vencedor da mão | `gustavo/g5-empates` | tests/vaza.spec.js | TC-TR-11, 12, 14, 15, 32, 33, 34, 38 |
+| **G6** Dicas: manilhas e carta vencendo | `gustavo/g6-dicas` | tests/dicas.spec.js | TC-TR-40, 41 |
 
 ### Breno
 
@@ -279,6 +281,8 @@ Todos começam com `abrirJogo({ ... })` e clique em `btn-nova-partida`, salvo qu
 | TC-TR-34 | 1-1: a 3ª decide | Vira 4. 1ª Nós (3O), 2ª Eles (AP), 3ª Eles (2E) | `placar-eles` = 1, `placar-nos` = 0 |
 | TC-TR-37 | Rodízio de quem começa a mão | `baralho` com 2 mãos (26 cartas); Nós vence a 1ª mão, Eles vence a 2ª | No início `vez` = J1; a 2ª mão começa com `vez` = J2; a 3ª, com J3 |
 | TC-TR-38 | Quem começa depois de empate | `baralho` com 2 mãos; na 2ª mão (começa J2), a 1ª vaza empata (3O de J3 × 3E de J4) | `vaza-1` = Empate; `vez` = J2 (quem começou a vaza empatada) |
+| TC-TR-40 | Manilhas destacadas | Vira 4O; J1 = 5E, 6E, 7E; J2 = 5C, 6C, 7C | 5E e 5C com `data-manilha="true"`; as outras sem |
+| TC-TR-41 | Carta vencendo | Vira 4O; J1 6E, J2 7C, J3 3C, J4 QE | Na mesa, a carta vencendo passa por 6E → 7C → 3C e continua 3C depois do QE |
 
 ### Breno — apostas, placar, mão de onze e de ferro
 
