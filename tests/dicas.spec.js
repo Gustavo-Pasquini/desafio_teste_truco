@@ -19,3 +19,13 @@ test('TC-TR-40 cartas que são manilha ficam destacadas', async () => {
     }
   }
 });
+
+test('TC-TR-41 a carta que está ganhando a vaza fica destacada', async () => {
+  const user = await comBaralho(montarBaralho(['6E', '2E', '7E'], ['7C', '6C', 'QC'], ['3C', '3P', 'AP'], ['QE', 'JE', 'KE'], '4O'));
+  for (const [jogador, carta, vencendo] of [['J1', '6E', '6E'], ['J2', '7C', '7C'], ['J3', '3C', '3C'], ['J4', 'QE', '3C']]) {
+    await jogar(user, jogador, carta);
+    const naMesa = [...screen.getByTestId('mesa').querySelectorAll('[data-carta]')];
+    const destacadas = naMesa.filter((c) => c.getAttribute('data-vencendo') === 'true').map((c) => c.getAttribute('data-carta'));
+    expect(destacadas).toEqual([vencendo]);
+  }
+});
