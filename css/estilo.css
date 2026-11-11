@@ -1,0 +1,23 @@
+/* Truco paulista — visual simples para jogar no navegador. */
+body { font-family: system-ui, sans-serif; margin: 0 auto; max-width: 960px; padding: 16px; background: #0b5d33; color: #fff; }
+header, section, footer { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+button { font: inherit; padding: 6px 12px; border-radius: 6px; border: 1px solid #333; cursor: pointer; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+[data-testid="placar-nos"]::before { content: "Nós: "; }
+[data-testid="placar-eles"]::before { content: "Eles: "; }
+[data-testid="valor-mao"]::before { content: "Vale: "; }
+[data-testid="manilha"]::before { content: "Manilha: "; }
+[data-testid="monte-qtd"]::before { content: "Monte: "; }
+[data-testid="vez"]::before { content: "Vez: "; }
+[data-testid^="mao-j"] { display: flex; gap: 6px; min-height: 64px; padding: 8px; border-radius: 8px; background: rgba(0,0,0,.2); }
+[data-testid^="mao-j"]::before { font-weight: bold; align-self: center; margin-right: 6px; }
+[data-testid="mao-j1"]::before { content: "J1"; } [data-testid="mao-j2"]::before { content: "J2"; }
+[data-testid="mao-j3"]::before { content: "J3"; } [data-testid="mao-j4"]::before { content: "J4"; }
+.carta { min-width: 44px; height: 60px; background: #fff; color: #111; font-size: 18px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; padding: 0 6px; }
+.carta[data-naipe="O"], .carta[data-naipe="C"] { color: #c0392b; }
+.carta[data-face="baixo"] { background: repeating-linear-gradient(45deg, #1d3557, #1d3557 6px, #457b9d 6px, #457b9d 12px); }
+[data-testid="vira"].carta, [data-testid="vira"] { background: #fff; color: #111; border-radius: 6px; padding: 8px; min-width: 40px; text-align: center; }
+[data-testid="mesa"] { display: flex; gap: 8px; min-height: 64px; }
+[data-testid="vazas"] { display: flex; gap: 8px; }
+[data-testid^="vaza-"] { background: rgba(0,0,0,.3); padding: 4px 8px; border-radius: 4px; }
+[data-testid="mensagem"] { font-size: 22px; font-weight: bold; }
