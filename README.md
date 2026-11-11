@@ -1,87 +1,94 @@
 # desafio_teste_truco
 
-**Truco paulista** — Truco paulista com 2 duplas (4 jogadores no mesmo computador): casos de teste de interface em JavaScript (Vitest + Testing Library). O jogo em si não é implementado por enquanto: os testes ficam falhando pelo motivo certo.
-
-> 📋 O que cada integrante vai fazer, as regras do jogo e todos os casos de teste estão em **[PLANEJAMENTO.md](PLANEJAMENTO.md)**.
+Desafio de testes: casos de teste para testar o **truco paulista**, com **2 duplas** (4 jogadores), com **casos de teste em JavaScript para testar JavaScript** (Jest + Testing Library).
 
 ## Colaboradores
 
-| Nome | RA | GitHub |
-|---|---|---|
-| Breno Bertaglia Nosima | 24113673-2 | [BrenoNosima](https://github.com/BrenoNosima) |
-| Gustavo Mazeto Pasquini | 24183078-2 | [Gustavo-Pasquini](https://github.com/Gustavo-Pasquini) |
+| Nome | RA | GitHub | Parte no trabalho |
+|---|---|---|---|
+| Breno Bertaglia Nosima | 24113673-2 | [BrenoNosima](https://github.com/BrenoNosima) | Tarefas B1–B5: CI, documentação dos testes e 16 casos de teste |
+| Gustavo Mazeto Pasquini | 24183078-2 | [Gustavo-Pasquini](https://github.com/Gustavo-Pasquini) | Tarefas G1–G6: estrutura do projeto e 25 casos de teste |
 
-A divisão do trabalho (quem faz cada tarefa e cada caso de teste) está em [PLANEJAMENTO.md](PLANEJAMENTO.md).
+As contribuições de cada um aparecem em **Insights → Contributors** e nos commits. A divisão das tarefas e as regras completas estão em [PLANEJAMENTO.md](PLANEJAMENTO.md).
 
 ## Como rodar
 
-Requisitos: Node.js 18+.
+Requisitos: Node.js 18 ou superior.
 
 ```bash
 npm install
-npm test              # roda os testes de interface (por enquanto todos falham, de propósito)
-npm run verificar     # confere se cada teste falha pelo motivo certo e tem um ID do plano
+npm test                    # roda todos os casos de teste (Jest)
+npm run verificar           # confere o motivo de cada falha e o ID de cada teste
+npm run verificar:completo  # idem + confere que todo caso do plano tem teste
+npx jest tests/<arquivo>.spec.js -t "TC-XX-NN"   # um caso só
 ```
 
 ## Funcionamento dos casos de teste
 
-> ⚠️ **Entrega atual: somente os casos de teste.** O jogo não é implementado até segunda ordem, então **todos os testes falham de propósito**. O que importa é que cada um falhe **pelo motivo certo**, porque o comportamento descrito ainda não existe, e não por erro no próprio teste. O `npm run verificar` confere isso.
+**Situação atual:** somente os casos de teste. O jogo ainda não está implementado, então **todos os testes falham de propósito**, pelo motivo certo (o comportamento ainda não existe). O `npm run verificar` confere isso.
 
-- **Tipo:** testes de interface, em JavaScript, com [Vitest](https://vitest.dev) + [Testing Library](https://testing-library.com). Cada teste carrega o `index.html` (esqueleto da tela) num navegador simulado (jsdom), clica nos elementos como um jogador (`user-event`) e confere o que deveria aparecer na tela.
-- **Metodologia (TDD, fase RED):** cada caso é escrito a partir da especificação, **um por vez**: escrever → rodar → ver falhar pelo motivo certo → commit `test:`. O passo a passo está em [`.claude/skills/tdd/SKILL.md`](.claude/skills/tdd/SKILL.md).
-- **Onde ficam:** pasta `tests/`, um arquivo `*.spec.js` por grupo de regras. `tests/helpers.js` tem a função `abrirJogo(params)`, que monta a tela.
-- **Como os elementos são encontrados:** pelo atributo `data-testid` de cada elemento da tela (contrato na seção 3 do PLANEJAMENTO.md).
-- **Sem sorte nos testes:** a partida pode ser montada pela URL (por exemplo, a ordem das cartas/peças/minas), então cada teste sempre começa do mesmo cenário.
-- **Rastreabilidade:** cada teste tem no título o ID do caso (`TC-..-NN`), igual à tabela do PLANEJAMENTO.md.
-- **Como rodar:** `npm test` (todos), `npx vitest run tests/<arquivo>.spec.js` (um arquivo), `npm run test:ui` (interface visual), `npm run verificar` (motivo da falha) e `npm run verificar:completo` (idem + TCs que faltam).
+- **Ferramentas:** [Jest](https://jestjs.io) roda os testes; [Testing Library](https://testing-library.com) (`@testing-library/dom`, `user-event` e `jest-dom`) simula o jogador; o [jsdom](https://github.com/jsdom/jsdom) faz o papel do navegador, sem precisar abrir um.
+- **Testes de interface:** cada teste abre o `index.html` do jogo pela função `abrirJogo(params)` de `tests/helpers.js`, clica como um jogador e confere o que aparece na tela. Os testes não chamam funções internas do jogo.
+- **Elementos da tela:** encontrados pelo atributo `data-testid` (contrato na seção 3 do PLANEJAMENTO.md).
+- **Sem depender de sorte:** o cenário (cartas, minas, peças, frota, puzzle) é montado por parâmetros de URL, então cada teste começa sempre do mesmo jeito. O tempo usa relógio falso (`jest.useFakeTimers()`).
+- **Rastreabilidade:** cada teste tem no título o ID do caso (`TC-..-NN`), o mesmo da tabela abaixo e da seção 5 do PLANEJAMENTO.md.
+- **Metodologia:** TDD, um caso de teste por vez: escrever, rodar, ver falhar pelo motivo certo e fazer o commit `test:`.
+- **Integração contínua:** o GitHub Actions roda `npm ci` e `npm run verificar` em todo push e Pull Request.
 
-## Desenvolvimento com agentes de IA
+## Casos de teste (41)
 
-O projeto está preparado para **Claude Code** e **Codex**. Os dois escrevem os testes um por vez e conferem o motivo de cada falha. Cada um tem a skill `tdd` e um hook que roda o verificador a cada edição. O Claude Code também tem sub-agentes separados para escrever e para revisar.
+| ID | Cenário | Arquivo | Resultado esperado | Autor |
+|---|---|---|---|---|
+| TC-TR-01 | Tela inicial | `tests/distribuicao.spec.js` | `placar-nos` = 0, `placar-eles` = 0, `btn-nova-partida` visível | Gustavo |
+| TC-TR-02 | Distribuição | `tests/distribuicao.spec.js` | Cada `mao-jN` tem 3 cartas; `vira` tem `data-carta` preenchido; `vez` = J1 | Gustavo |
+| TC-TR-03 | Baralho de 40 cartas | `tests/distribuicao.spec.js` | `monte-qtd` = 27; nenhuma carta com valor 8, 9 ou 10 | Gustavo |
+| TC-TR-04 | Cartas não repetem | `tests/distribuicao.spec.js` | As 13 cartas exibidas (12 nas mãos + vira) são todas diferentes | Gustavo |
+| TC-TR-05 | Manilha a partir da vira (parametrizado) | `tests/manilha.spec.js` | `manilha` = 5, 6, 7, Q, J, K, A, 2, 3, 4 respectivamente | Gustavo |
+| TC-TR-06 | Força das cartas comuns | `tests/manilha.spec.js` | `vaza-1` = Nós e `vaza-2` = Eles (o 3 vence sem ser a 1ª nem a última carta; o A não é a maior) | Gustavo |
+| TC-TR-07 | Ordem das manilhas | `tests/manilha.spec.js` | `vaza-1` = Eles (zap de J4 vence) | Gustavo |
+| TC-TR-08 | Manilha vence o 3 | `tests/manilha.spec.js` | `vaza-1` = Nós e `vaza-2` = Eles (a manilha vence o 3 sem ser a 1ª nem a última carta) | Gustavo |
+| TC-TR-09 | Só joga quem tem a vez | `tests/vaza.spec.js` | Nada muda em `mesa`; `vez` continua J1 | Gustavo |
+| TC-TR-10 | Ordem de jogada | `tests/vaza.spec.js` | `vez` = J2; depois J3; depois J4 | Gustavo |
+| TC-TR-11 | Empate na 1ª vaza | `tests/vaza.spec.js` | `vaza-1` = Empate; mão para Eles; `placar-eles` = 1 | Gustavo |
+| TC-TR-12 | Ganha a 1ª e empata a 2ª | `tests/vaza.spec.js` | Mão para Nós; `placar-nos` = 1; 3ª vaza não é jogada | Gustavo |
+| TC-TR-13 | Vencedor da vaza começa a próxima / 2 vazas encerram a mão | `tests/vaza.spec.js` | `vez` = J3; Nós vence a 2ª → `placar-nos` = 1, nova mão distribuída, sem 3ª vaza | Gustavo |
+| TC-TR-14 | 1ª Nós, 2ª Eles, 3ª empata | `tests/vaza.spec.js` | Mão para Nós | Gustavo |
+| TC-TR-15 | Três empates | `tests/vaza.spec.js` | Ninguém pontua (placar 0 × 0); nova mão | Gustavo |
+| TC-TR-16 | Botão truco | `tests/apostas.spec.js` | `valor-mao` = 1; `btn-truco` com texto "Truco" habilitado para o jogador da vez | Breno |
+| TC-TR-17 | Pedir truco | `tests/apostas.spec.js` | `resposta` aparece para a dupla Eles com Aceitar, Correr e Aumentar ("Seis"); cartas ficam bloqueadas até responder | Breno |
+| TC-TR-18 | Aceitar truco | `tests/apostas.spec.js` | `valor-mao` = 3; `placar-nos` = 3 | Breno |
+| TC-TR-19 | Correr do truco | `tests/apostas.spec.js` | `placar-nos` = 1; nova mão distribuída | Breno |
+| TC-TR-20 | Aumentos | `tests/apostas.spec.js` | `valor-mao` passa por 3, 6, 9, 12; no Doze não existe `btn-aumentar` | Breno |
+| TC-TR-21 | Correr de um aumento (parametrizado) | `tests/apostas.spec.js` | Quem pediu ganha 3 / 6 / 9 | Breno |
+| TC-TR-22 | Quem pediu não aumenta | `tests/apostas.spec.js` | `btn-truco` desabilitado para Nós; habilitado ("Seis") para a dupla Eles | Breno |
+| TC-TR-23 | Fim da partida | `tests/placar.spec.js` | `placar-nos` = 12; `mensagem` = "Nós venceram a partida!"; cartas bloqueadas | Breno |
+| TC-TR-24 | Nova partida após o fim | `tests/placar.spec.js` | Placar 0 × 0, mãos distribuídas | Breno |
+| TC-TR-25 | Mão de onze — jogar | `tests/mao-de-onze.spec.js` | `decisao-onze` aparece; cartas de J3 com `data-face="cima"` para J1; clicar Jogar → `valor-mao` = 3 | Breno |
+| TC-TR-26 | Mão de onze — correr | `tests/mao-de-onze.spec.js` | `placar-eles` = 5; nova mão | Breno |
+| TC-TR-27 | Sem truco na mão de onze | `tests/mao-de-onze.spec.js` | `btn-truco` oculto ou desabilitado durante toda a mão | Breno |
+| TC-TR-28 | Mão de ferro | `tests/mao-de-onze.spec.js` | Todas as cartas com `data-face="baixo"`; sem `btn-truco`; `valor-mao` = 1; quem vence a mão vence a partida | Breno |
+| TC-TR-29 | Só a mão da vez para cima | `tests/vaza.spec.js` | Antes: cartas de J1 `data-face="cima"`, de J2–J4 `"baixo"`. Depois: J2 `"cima"`, J1, J3 e J4 `"baixo"` | Gustavo |
+| TC-TR-30 | Escala completa das comuns (parametrizado) | `tests/manilha.spec.js` | `vaza-1` = Eles em todos os pares | Gustavo |
+| TC-TR-31 | Cada manilha vence a mais fraca (parametrizado) | `tests/manilha.spec.js` | `vaza-1` = Nós nos três pares | Gustavo |
+| TC-TR-32 | Cartas iguais na mesma dupla não empatam | `tests/vaza.spec.js` | `vaza-1` = Nós (não "Empate") | Gustavo |
+| TC-TR-33 | 1ª e 2ª empatam: a 3ª decide | `tests/vaza.spec.js` | `placar-eles` = 1, `placar-nos` = 0 | Gustavo |
+| TC-TR-34 | 1-1: a 3ª decide | `tests/vaza.spec.js` | `placar-eles` = 1, `placar-nos` = 0 | Gustavo |
+| TC-TR-35 | Fim passando de 12 (parametrizado) | `tests/placar.spec.js` | 13 × 5 e "Nós venceram a partida!" · 5 × 12 e "Eles venceram a partida!" | Breno |
+| TC-TR-36 | Mão de onze da dupla Eles | `tests/mao-de-onze.spec.js` | `decisao-onze` aparece para Eles; cartas de J4 visíveis para J2; Correr → `placar-nos` = 5 | Breno |
+| TC-TR-37 | Rodízio de quem começa a mão | `tests/vaza.spec.js` | No início `vez` = J1; a 2ª mão começa com `vez` = J2; a 3ª, com J3 | Gustavo |
+| TC-TR-38 | Quem começa depois de empate | `tests/vaza.spec.js` | `vaza-1` = Empate; `vez` = J2 (quem começou a vaza empatada) | Gustavo |
+| TC-TR-39 | Placar acumula entre mãos | `tests/placar.spec.js` | `placar-nos` = 1 e `placar-eles` = 1 | Breno |
+| TC-TR-40 | Manilhas destacadas | `tests/dicas.spec.js` | 5E e 5C com `data-manilha="true"`; as outras sem | Gustavo |
+| TC-TR-41 | Carta vencendo | `tests/dicas.spec.js` | Na mesa, a carta vencendo passa por 6E → 7C → 3C e continua 3C depois do QE | Gustavo |
 
-- Claude Code: `/tdd G2` · Codex: `$tdd G2` · depois, "go" escreve o próximo caso de teste.
-- Detalhes, técnicas e fontes: [docs/TDD-COM-IA.md](docs/TDD-COM-IA.md).
+## Estrutura
 
-### ID → arquivo → o que verifica
-
-| ID | Arquivo | O que verifica |
-|---|---|---|
-| TC-TR-01 | `tests/distribuicao.spec.js` | Estado inicial do placar e botão de nova partida |
-| TC-TR-02 | `tests/distribuicao.spec.js` | Distribuição de três cartas, vira e primeiro jogador |
-| TC-TR-03 | `tests/distribuicao.spec.js` | Baralho de 40 cartas sem 8, 9 e 10 |
-| TC-TR-04 | `tests/distribuicao.spec.js` | Ausência de cartas repetidas na distribuição |
-| TC-TR-05 | `tests/manilha.spec.js` | Valor da manilha calculado a partir da vira |
-| TC-TR-06 | `tests/manilha.spec.js` | Escala de força das cartas comuns |
-| TC-TR-07 | `tests/manilha.spec.js` | Ordem dos naipes entre as manilhas |
-| TC-TR-08 | `tests/manilha.spec.js` | Manilha vencendo o 3 |
-| TC-TR-09 | `tests/vaza.spec.js` | Bloqueio de jogada fora da vez |
-| TC-TR-10 | `tests/vaza.spec.js` | Ordem de jogada entre J1, J2, J3 e J4 |
-| TC-TR-11 | `tests/vaza.spec.js` | Empate na primeira vaza e decisão pela segunda |
-| TC-TR-12 | `tests/vaza.spec.js` | Vitória da primeira vaza seguida de empate |
-| TC-TR-13 | `tests/vaza.spec.js` | Vencedor iniciando a vaza seguinte e encerramento em duas vazas |
-| TC-TR-14 | `tests/vaza.spec.js` | Decisão da mão quando a terceira vaza empata |
-| TC-TR-15 | `tests/vaza.spec.js` | Três empates sem pontuação |
-| TC-TR-16 | `tests/apostas.spec.js` | Valor inicial da mão e disponibilidade do Truco |
-| TC-TR-17 | `tests/apostas.spec.js` | Opções de resposta e bloqueio das cartas após pedir Truco |
-| TC-TR-18 | `tests/apostas.spec.js` | Truco aceito valendo três pontos |
-| TC-TR-19 | `tests/apostas.spec.js` | Fuga do Truco concedendo um ponto ao solicitante |
-| TC-TR-20 | `tests/apostas.spec.js` | Sequência de aumentos até Doze |
-| TC-TR-21 | `tests/apostas.spec.js` | Pontuação ao correr de Seis, Nove ou Doze |
-| TC-TR-22 | `tests/apostas.spec.js` | Direito de aumentar reservado à dupla adversária |
-| TC-TR-23 | `tests/placar.spec.js` | Fim da partida ao atingir 12 pontos |
-| TC-TR-24 | `tests/placar.spec.js` | Reinício da partida após o fim |
-| TC-TR-25 | `tests/mao-de-onze.spec.js` | Decisão de jogar a mão de onze |
-| TC-TR-26 | `tests/mao-de-onze.spec.js` | Decisão de correr da mão de onze |
-| TC-TR-27 | `tests/mao-de-onze.spec.js` | Proibição de Truco na mão de onze |
-| TC-TR-28 | `tests/mao-de-onze.spec.js` | Cartas fechadas e regras da mão de ferro |
-| TC-TR-29 | `tests/vaza.spec.js` | Apenas a mão do jogador da vez com cartas abertas |
-| TC-TR-30 | `tests/manilha.spec.js` | Escala completa entre cartas comuns vizinhas |
-| TC-TR-31 | `tests/manilha.spec.js` | Cada manilha vencendo a imediatamente mais fraca |
-| TC-TR-32 | `tests/vaza.spec.js` | Cartas iguais da mesma dupla sem provocar empate |
-| TC-TR-33 | `tests/vaza.spec.js` | Terceira vaza decidindo após dois empates |
-| TC-TR-34 | `tests/vaza.spec.js` | Terceira vaza decidindo uma mão empatada em 1 a 1 |
-| TC-TR-35 | `tests/placar.spec.js` | Fim da partida ao ultrapassar ou atingir 12 pontos |
-| TC-TR-36 | `tests/mao-de-onze.spec.js` | Mão de onze da dupla Eles |
-| TC-TR-37 | `tests/vaza.spec.js` | Rodízio do jogador que inicia cada mão |
-| TC-TR-38 | `tests/vaza.spec.js` | Jogador inicial mantido após empate na vaza |
-| TC-TR-39 | `tests/placar.spec.js` | Acúmulo do placar entre mãos |
+```
+index.html                esqueleto da tela (elementos da seção 3)
+js/main.js                ponto de entrada do jogo
+tests/helpers.js          abrirJogo(), cenários fixos e atalhos
+tests/*.spec.js           casos de teste
+scripts/verificar-testes.mjs  verificador (npm run verificar e CI)
+PLANEJAMENTO.md           regras, contrato, tarefas e casos de teste
+docs/                     matriz de cobertura e TDD com IA
+```
